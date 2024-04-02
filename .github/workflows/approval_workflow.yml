@@ -20,7 +20,7 @@ jobs:
         with:
           base_repository_branch: main
           github_org: ktpl-harpal
-          repository_name: test-repo
+          repository_name: testrepo
           pr_reviewer: ktpl-hemang
           time_limit: 300
           github_token: ${{ secrets.GIT_TOKEN }}
