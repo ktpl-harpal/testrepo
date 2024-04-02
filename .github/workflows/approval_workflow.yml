@@ -35,6 +35,8 @@ jobs:
               repo: context.repo.repo,
               pull_number: pullRequestNumber,
               event: 'APPROVE',
+              body: 'Please review and approve.',
+              reviewers: ['ktpl-harpal']
             });
 
   build:
