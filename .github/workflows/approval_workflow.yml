@@ -9,25 +9,21 @@ on:
 
 jobs:
   wait-for-approval:
-    name: Wait for approval
+    name: Wait_for_approval Action
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Here you can add any necessary steps to prepare your codebase for manual approval
-      # For example, running tests, linting, etc.
-
-      - name: Request review from ktpl-hemang
-        if: github.event_name == 'pull_request'
-        run: |
-          curl -XPOST -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
-          -d '{"reviewers":["ktpl-hemang"],"team_reviewers":[],"labels":[],"reviewers":[],"assignees":[]}' \
-          "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers"
-
-      - name: Wait for manual approval
-        if: github.event_name == 'push'
-        run: echo "::set-output name=approved::true" # Simulating approval for push events
+      - name: Wait for approval
+        uses: arun291091/wait_for_approval_gha@v1
+        with:
+          base_repository_branch: main
+          github_org: ktpl-harpal
+          repository_name: test-repo
+          pr_reviewer: ktpl-hemang
+          time_limit: 300
+          github_token: ${{ secrets.GIT_TOKEN }}
 
   build:
     name: Build
