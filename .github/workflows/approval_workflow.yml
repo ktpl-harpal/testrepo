@@ -3,7 +3,7 @@ name: CI with Approval
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   wait-for-approval:
