@@ -8,8 +8,24 @@ on:
   workflow_dispatch:
 
 jobs:
+  wait-for-approval:
+    name: Wait for approval
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Wait for manual approval
+        uses: your-github-user/manual-approval@your-dev-branch
+        with:
+          secret: ${{ secrets.APPROVAL_TOKEN }}
+          approvers: ktpl-hemang
+
+  build:
+    name: Build
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    needs: wait-for-approval
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
