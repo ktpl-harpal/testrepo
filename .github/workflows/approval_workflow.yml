@@ -2,10 +2,8 @@ name: CI with Approval
 
 on:
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
-  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
   wait-for-approval:
@@ -20,7 +18,7 @@ jobs:
         with:
           base_repository_branch: main
           github_org: ktpl-harpal
-          repository_name: testrepo
+          repository_name: test-repo
           pr_reviewer: ktpl-hemang
           time_limit: 300
           github_token: ${{ secrets.GIT_TOKEN }}
@@ -29,7 +27,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: wait-for-approval
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && needs.wait-for-approval.outputs.approved == 'true')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.wait-for-approval.outputs.approved == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
