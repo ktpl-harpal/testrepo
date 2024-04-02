@@ -15,17 +15,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Wait for manual approval
-        uses: your-github-user/manual-approval@your-dev-branch
-        with:
-          secret: ${{ secrets.APPROVAL_TOKEN }}
-          approvers: ktpl-hemang
+      # Here you can add any necessary steps to prepare your codebase for manual approval
+      # For example, running tests, linting, etc.
+
+      - name: Request review from ktpl-hemang
+        if: github.event_name == 'pull_request'
+        run: |
+          curl -XPOST -H "Authorization: token ${{ secrets.APPROVAL_TOKEN }}" \
+          -d '{"reviewers":["ktpl-hemang"],"team_reviewers":[],"labels":[],"reviewers":[],"assignees":[]}' \
+          "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers"
 
   build:
     name: Build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     needs: wait-for-approval
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action == 'closed' && needs.wait-for-approval.outputs.approved == 'true')
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
