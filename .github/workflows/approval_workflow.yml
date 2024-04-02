@@ -8,38 +8,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  approval:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request'
-    steps:
-      - name: Request Approval
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.APPROVAL_TOKEN }}
-          script: |
-            const { data: pullRequests } = await github.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              head: context.sha,
-            });
-
-            if (pullRequests.length === 0) {
-              console.log("No pull request found.");
-              return;
-            }
-
-            const pullRequestNumber = pullRequests[0].number;
-
-            await github.pulls.createReview({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pullRequestNumber,
-              event: 'APPROVE',
-              body: 'Please review and approve.',
-              reviewers: ['ktpl-hemang'] // Specify the user here
-            });
-
-  build:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
